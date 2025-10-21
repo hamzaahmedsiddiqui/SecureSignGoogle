@@ -17,7 +17,7 @@ class LoginViewModel: ObservableObject {
     @Published var email: String = ""
     @Published var password: String = ""
     @Published var isLoggedInSuccessfully: Bool = false
-    
+    @Published var isLoggedIn: Bool = false
     
     func signInWithGoogle() {
         guard let clientID =  FirebaseApp.app()?.options.clientID else {
@@ -49,6 +49,17 @@ class LoginViewModel: ObservableObject {
                 guard let user = res?.user else {return}
                 print ("user: \(user)")
             }
+        }
+    }
+    
+    func loginWithFirebase() {
+        Auth.auth().signIn(withEmail: email, password: password){authResult, error in
+            if let error = error {
+                print("Error signing in: \(error.localizedDescription)")
+                return
+            }
+            
+            self.isLoggedIn = true
         }
     }
 }
