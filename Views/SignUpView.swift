@@ -14,25 +14,21 @@ struct SignUpView: View {
     @State private var name = ""
     @State private var agreeToTerms = false
     @State private var showPassword = false
-
+    
     // UI state
     @State private var isLoading = false
     @State private var errorMsg: String?
     @State private var infoMsg: String?
-
+    
     // ViewModel you already have
     @ObservedObject private var viewModel = SignUpViewModel()
-
+    
     var body: some View {
         NavigationStack {
             ZStack {
                 // Background
-                LinearGradient(
-                    colors: [Color.blue.opacity(0.15), Color.purple.opacity(0.12)],
-                    startPoint: .topLeading, endPoint: .bottomTrailing
-                )
-                .ignoresSafeArea()
-
+                backgroundView()
+                
                 ScrollView {
                     VStack(spacing: 20) {
                         // Header
@@ -45,7 +41,7 @@ struct SignUpView: View {
                                 .foregroundStyle(.secondary)
                         }
                         .padding(.top, 32)
-
+                        
                         // Card
                         VStack(spacing: 16) {
                             // Name
@@ -58,7 +54,7 @@ struct SignUpView: View {
                                         .submitLabel(.next)
                                 }
                             )
-
+                            
                             // Email
                             LabeledField(
                                 title: "Email",
@@ -77,7 +73,7 @@ struct SignUpView: View {
                                     }
                                 }
                             )
-
+                            
                             // Password
                             LabeledField(
                                 title: "Password",
@@ -99,7 +95,7 @@ struct SignUpView: View {
                                     }
                                 }
                             )
-
+                            
                             // Terms
                             Toggle(isOn: $agreeToTerms) {
                                 Text("I agree to the Terms and Privacy Policy")
@@ -107,7 +103,7 @@ struct SignUpView: View {
                                     .foregroundStyle(.secondary)
                             }
                             .toggleStyle(.switch)
-
+                            
                             // Error / Info banners
                             if let e = errorMsg, !e.isEmpty {
                                 Banner(text: e, style: .error)
@@ -115,7 +111,7 @@ struct SignUpView: View {
                             if let m = infoMsg, !m.isEmpty {
                                 Banner(text: m, style: .info)
                             }
-
+                            
                             // Primary button
                             Button(action: createAccount) {
                                 HStack {
@@ -132,7 +128,7 @@ struct SignUpView: View {
                             .background(isCreateDisabled ? Color.gray : Color.blue)
                             .cornerRadius(12)
                             .disabled(isCreateDisabled)
-
+                            
                         }
                         .padding(20)
                         .background(
@@ -144,7 +140,7 @@ struct SignUpView: View {
                         .padding(.bottom, 24)
                     }
                 }
-
+                
                 // Loading overlay
                 if isLoading {
                     Color.black.opacity(0.15).ignoresSafeArea()
@@ -164,9 +160,8 @@ struct SignUpView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
     }
-
+    
     // MARK: - Helpers
-
     private var isCreateDisabled: Bool {
         isLoading
         || email.isEmpty
@@ -174,12 +169,12 @@ struct SignUpView: View {
         || password.count < 6
         || !agreeToTerms
     }
-
+    
     private func createAccount() {
         errorMsg = nil
         infoMsg = nil
         isLoading = true
-
+        
         viewModel.signUp(email: email, password: password, displayName: name) { result in
             DispatchQueue.main.async {
                 isLoading = false
@@ -195,56 +190,15 @@ struct SignUpView: View {
             }
         }
     }
-
+    
     private func hideKeyboard() {
-        #if canImport(UIKit)
+#if canImport(UIKit)
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
                                         to: nil, from: nil, for: nil)
-        #endif
+#endif
     }
 }
 
 #Preview {
     NavigationStack { SignUpView() }
-}
-
-// MARK: - Reusable UI bits
-
-private struct PasswordStrengthView: View {
-    let password: String
-
-    private var strength: (label: String, score: Int, color: Color) {
-        var score = 0
-        if password.count >= 6 { score += 1 }
-        if password.range(of: #"[A-Z]"#, options: .regularExpression) != nil { score += 1 }
-        if password.range(of: #"[0-9]"#, options: .regularExpression) != nil { score += 1 }
-        if password.range(of: #"[^\w]"#, options: .regularExpression) != nil { score += 1 }
-
-        switch score {
-        case 0...1: return ("Weak", score, .red)
-        case 2:     return ("Okay", score, .orange)
-        case 3:     return ("Good", score, .yellow)
-        default:    return ("Strong", score, .green)
-        }
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            ZStack(alignment: .leading) {
-                Capsule().fill(Color(.tertiarySystemFill)).frame(height: 6)
-                Capsule().fill(strength.color)
-                    .frame(width: CGFloat(strength.score) / 4.0 * 200, height: 6)
-                    .animation(.easeOut(duration: 0.25), value: strength.score)
-            }
-            .frame(maxWidth: 200, alignment: .leading)
-            Text("Strength: \(strength.label)")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-        }
-        .padding(.top, 2)
-    }
-}
-
-#Preview {
-    SignUpView()
 }

@@ -25,12 +25,7 @@ struct LoginView: View {
         NavigationStack {
             // Background
             ZStack{
-                // Background
-                LinearGradient(
-                    colors: [Color.blue.opacity(0.15), Color.purple.opacity(0.12)],
-                    startPoint: .topLeading, endPoint: .bottomTrailing
-                )
-                .ignoresSafeArea()
+                backgroundView()
                 
                 VStack () {
                     VStack(spacing: 6) {
@@ -82,7 +77,7 @@ struct LoginView: View {
                     )
                     
                     
-                    VStack(alignment: .leading){
+                    VStack(spacing: 16){
                         Button(action: {
                             viewModel.loginWithFirebase()
                         }) {
