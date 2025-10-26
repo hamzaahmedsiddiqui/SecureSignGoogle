@@ -11,10 +11,13 @@ This project demonstrates:
 - Configuring Firebase in an iOS app.
 - Implementing **Google Sign-In** with Firebase Authentication.
 - Managing authentication state using **SwiftUI + MVVM**.
-- Displaying user details after successful sign-in.
+- Displaying dashboard after successful sign-in.
+- forget password feature
+- Sign up with Firebase 
 
 Everything is kept minimal and clean — focused on understanding the flow, not boilerplate.
 
+## Note: Google Sign-In Plist is not included due to security reasons as you can download it from your Firebase account 
 ---
 
 ## 🧰 Tech Stack
